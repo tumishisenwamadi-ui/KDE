@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>Intelligence Fuel Guard</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="kpi.js"></script>
+</head>
+<body><main class="module-page">
+  <div class="module-head"><a href="index.html" class="btn btn-secondary"><span class="material-symbols-rounded">arrow_back</span><span>Back to dashboard</span></a><h1>Intelligence Fuel Guard</h1></div>
+  <p class="module-lead">Monitors tank sensors and flags fuel drops that happen while a truck is parked. Demo truck, last 24 h.</p>
+  <div class="stats-grid" id="kpis"></div>
+  <div class="chart-card">
+    <div class="chart-card-header"><h3 class="chart-card-title">Tank level (L)</h3>
+      <p class="chart-card-subtitle">Red markers = theft alerts. The refuel at 12:00 and driving slosh are correctly ignored.</p></div>
+    <div class="chart-container"><canvas id="fuelChart"></canvas></div>
+  </div>
+  <div class="dashboard-table-container">
+    <div class="dashboard-table-header"><h3 class="dashboard-table-title">Alerts</h3></div>
+    <table class="dashboard-table"><thead><tr><th>Time</th><th>Estimated loss</th><th>Result</th><th>Alert delay</th></tr></thead><tbody id="alerts"></tbody></table>
+  </div>
+  <p class="note">Rule: &gt;12 L drop within 5 min while parked. Fuel price assumed at R<span id="price"></span>/L. Simulated data: swap Fleet.fuel() in kpi.js for your sensor feed.</p>
+</main>
+<script>
+  const d = Fleet.fuel(), k = d.kpi;
+  document.getElementById('price').textContent = Fleet.DIESEL_PRICE;
+  Fleet.kpiCards(document.getElementById('kpis'), [
+    { title: 'Theft events (24 h)', value: k.thefts, icon: 'local_gas_station', tone: 'error', note: 'Alerts raised', good: false },
+    { title: 'Fuel lost', value: k.litresLost + ' L', icon: 'opacity', tone: 'warning', note: 'R' + k.costR.toLocaleString() + ' value', good: false },
+    { title: 'Detection rate', value: k.detectionRate + '%', icon: 'verified_user', tone: 'success', note: 'Thefts caught / thefts occurred' },
+    { title: 'False alarms', value: k.falseAlarms, icon: 'notifications_off', tone: 'info', note: 'Target: 0 per day' },
+    { title: 'Avg time to alert', value: k.avgAlertMin + ' min', icon: 'timer', tone: 'primary', note: 'Theft start to alert' },
+  ]);
+  const labels = d.level.map((_, m) => Fleet.fmtTime(m));
+  new Chart('fuelChart', { type: 'line',
+    data: { labels, datasets: [
+      { label: 'Level', data: d.level.map(v => +v.toFixed(1)), borderColor: '#8b5cf6', borderWidth: 2, pointRadius: 0, tension: .2 },
+      { label: 'Theft alert', data: d.level.map((v, m) => d.alerts.includes(m) ? +v.toFixed(1) : null),
+        borderColor: '#ef4444', backgroundColor: '#ef4444', showLine: false, pointRadius: 7 } ] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { maxTicksLimit: 12 } } } } });
+  document.getElementById('alerts').innerHTML = d.alerts.map(a => {
+    const t = d.truth.find(t => a >= t.m && a <= t.m + 10);
+    return '<tr><td>' + Fleet.fmtTime(a) + '</td><td>' + (t ? '~' + t.l + ' L' : '-') + '</td><td><span class="status-badge ' +
+      (t ? 'error">Confirmed theft' : 'warning">False alarm') + '</span></td><td>' + (t ? (a - t.m + 1) + ' min' : '-') + '</td></tr>';
+  }).join('');
+</script></body></html>

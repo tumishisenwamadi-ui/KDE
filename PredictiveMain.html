@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>Predictive Maintenance</title>  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="kpi.js"></script>
+</head>
+<body><main class="module-page">
+  <div class="module-head"><a href="index.html" class="btn btn-secondary"><span class="material-symbols-rounded">arrow_back</span><span>Back to dashboard</span></a><h1>Predictive Maintenance</h1></div>
+  <p class="module-lead">Scores the engine, brakes, tyres and battery of each truck, and flags trucks likely to fail before they break down.</p>
+  <div class="stats-grid" id="kpis"></div>
+  <div class="dashboard-table-container"><div class="dashboard-table-header"><h3 class="dashboard-table-title">Fleet health</h3></div>
+    <table class="dashboard-table"><thead><tr><th>Vehicle</th><th>Engine</th><th>Brakes</th><th>Tyres</th><th>Battery</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <p class="note">Simulated data. Replace the generator in kpi.js with your real feed.</p>
+</main>
+<script>
+  const d = Fleet.maintenance(), k = d.kpi;
+  Fleet.kpiCards(document.getElementById('kpis'), [
+    { title: 'Vehicles at risk', value: k.atRisk, icon: 'car_crash', tone: 'error', note: 'A component below 45%', good: false },
+    { title: 'Fleet health', value: k.health + '%', icon: 'monitor_heart', tone: 'success', note: 'Average component score' },
+    { title: 'Failures predicted', value: k.predicted, icon: 'online_prediction', tone: 'warning', note: 'Next 30 days', good: false },
+    { title: 'Downtime avoided', value: k.downtimeH + ' h', icon: 'schedule', tone: 'info', note: 'Fixed before breakdown' },
+    { title: 'Prediction accuracy', value: k.accuracy + '%', icon: 'target', tone: 'primary', note: 'Predicted vs actual faults' },
+  ]);
+  const cell = v => '<td><span class="status-badge ' + (v < 45 ? 'error' : v < 65 ? 'warning' : 'success') + '">' + v + '%</span></td>';
+  document.getElementById('rows').innerHTML = d.trucks.map(t => '<tr><td>' + t.name + '</td>' + d.parts.map(p => cell(t.h[p])).join('') +
+    '<td>' + (t.min < 45 ? 'Service ' + t.worst.toLowerCase() + ' within ' + t.days + ' days' : 'OK') + '</td></tr>').join('');
+</script></body></html>

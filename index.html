@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Google Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet map -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+
+      <!-- Dashboard Sidebar -->
+      <aside class="dashboard-sidebar" id="dashboardSidebar">
+        <div class="dashboard-brand">
+          <button class="dashboard-sidebar-toggle">
+            <span class="material-symbols-rounded">menu</span>
+          </button>
+          <a class="logo">KDE Dashboard</a>
+        </div>
+        <nav class="dashboard-nav">
+          <div class="dashboard-nav-section">
+            <a href="#" class="dashboard-nav-item active" data-view="overview">
+              <span class="nav-icon material-symbols-rounded">dashboard</span>
+              <span class="nav-label">Overview</span>
+            </a>
+            <a href="#" class="dashboard-nav-item" data-view="performance">
+              <span class="nav-icon material-symbols-rounded">folder</span>
+              <span class="nav-label">Performance Indicators</span>
+            </a>
+            <a href="#" class="dashboard-nav-item" data-view="analytics">
+              <span class="nav-icon material-symbols-rounded">checklist</span>
+              <span class="nav-label">Analytics</span>
+            </a>
+            <a href="#" class="dashboard-nav-item" data-view="products">
+              <span class="nav-icon material-symbols-rounded">bar_chart</span>
+              <span class="nav-label">Products</span>
+            </a>
+            <a href="#" class="dashboard-nav-item" data-view="settings">
+              <span class="nav-icon material-symbols-rounded">settings</span>
+              <span class="nav-label">Settings</span>
+            </a>
+          </div>
+        </nav>
+        <div class="sidebar-footer">
+          <a href="#" class="btn btn-secondary sidebar-back-button">
+            <span class="material-symbols-rounded">home</span>
+            <span class="btn-label">Back to Site</span>
+          </a>
+        </div>
+      </aside>
+      <div class="dashboard-sidebar-overlay" id="dashboardSidebarOverlay"></div>
+
+      <!-- Dashboard Main Content -->
+      <main class="dashboard-main">
+
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+          <div class="dashboard-header-content">
+            <button class="dashboard-sidebar-toggle">
+              <span class="material-symbols-rounded">menu</span>
+            </button>
+            <h1 class="dashboard-header-title" id="dashboardTitle">Overview</h1>
+          </div>
+          <div class="search-container" id="searchContainer">
+            <span class="search-icon material-symbols-rounded">search</span>
+            <input type="search" class="search-input form-input" placeholder="Search projects, tasks, reports..." id="searchInput" />
+            <button class="search-close btn" id="searchClose">
+              <span class="material-symbols-rounded">close</span>
+            </button>
+          </div>
+          <div class="dashboard-header-actions">
+            <button class="mobile-search-btn btn btn-ghost" id="mobileSearchBtn">
+              <span class="material-symbols-rounded">search</span>
+            </button>
+            <div class="notification-button">
+              <span class="material-symbols-rounded">notifications</span>
+              <div class="notification-badge">3</div>
+            </div>
+            <div class="user-menu" id="userMenu">
+              <div class="user-menu-trigger" id="user-menu-trigger">
+                <div class="user-avatar-small">
+                  <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face&auto=format" alt="User Avatar" />
+                </div>
+              </div>
+              <div class="user-menu-dropdown">
+                <a href="#" class="user-menu-item">
+                  <span class="icon material-symbols-rounded">person</span>
+                  <span>Profile</span>
+                </a>
+                <div class="user-menu-item theme-item">
+                  <span class="icon material-symbols-rounded">palette</span>
+                  <div class="theme-toggle" id="theme-toggle">
+                    <div class="theme-option active" data-theme="light">Light</div>
+                    <div class="theme-option" data-theme="dark">Dark</div>
+                  </div>
+                </div>
+                <a href="#" class="user-menu-item">
+                  <span class="icon material-symbols-rounded">logout</span>
+                  <span>Sign Out</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Dashboard Content: every tab is a .dashboard-view -->
+        <div class="dashboard-content">
+
+          <!-- ========== OVERVIEW (the only place the map lives) ========== -->
+          <div class="dashboard-view active" id="overview">
+            <div class="chart-card map-card">
+              <div class="chart-card-header">
+                <h3 class="chart-card-title">Live tracking</h3>
+                <p class="chart-card-subtitle" id="map-status">Idle</p>
+              </div>
+              <div id="tracking-map"></div>
+            </div>
+          </div>
+
+          <!-- ========== PERFORMANCE INDICATORS ========== -->
+          <div class="dashboard-view" id="performance">
+            <div class="stats-grid">
+             <a href="IntFuelGuard.html" class="stat-card stat-card-link">
+             <div class="stat-card-header">
+             <div class="stat-card-title">Intelligence Fuel Guard</div>
+            <div class="stat-card-icon primary">
+          <span class="material-symbols-rounded">folder</span>
+           </div>
+          </div>
+  <div class="stat-card-value" data-kpi="0">-</div>
+  <div class="stat-card-change positive">
+    <span class="material-symbols-rounded">trending_up</span>
+    <span data-kpi-note="0"></span>
+  </div>
+</a>
+             <a href="HealthRouteNav.html" class="stat-card stat-card-link">
+  <div class="stat-card-header">
+    <div class="stat-card-title">Healthiest Route Navigation</div>
+    <div class="stat-card-icon primary">
+      <span class="material-symbols-rounded">route</span>
+    </div>
+  </div>
+  <div class="stat-card-value" data-kpi="1">-</div>
+  <div class="stat-card-change positive">
+    <span class="material-symbols-rounded">trending_up</span>
+    <span data-kpi-note="1"></span>
+  </div>
+</a>
+             <a href="PredictiveMain.html" class="stat-card stat-card-link">
+  <div class="stat-card-header">
+    <div class="stat-card-title">Predictive Maintenance</div>
+    <div class="stat-card-icon primary">
+      <span class="material-symbols-rounded">folder</span>
+    </div>
+  </div>
+  <div class="stat-card-value" data-kpi="2">-</div>
+  <div class="stat-card-change positive">
+    <span class="material-symbols-rounded">trending_up</span>
+    <span data-kpi-note="2"></span>
+  </div>
+</a>
+             <a href="FleetLearning.html" class="stat-card stat-card-link">
+  <div class="stat-card-header">
+    <div class="stat-card-title">Fleet Learning</div>
+    <div class="stat-card-icon primary">
+      <span class="material-symbols-rounded">folder</span>
+    </div>
+  </div>
+  <div class="stat-card-value" data-kpi="3">-</div>
+  <div class="stat-card-change positive">
+    <span class="material-symbols-rounded">trending_up</span>
+    <span data-kpi-note="3"></span>
+  </div>
+</a>
+            </div>
+          </div>
+
+          <!-- ========== ANALYTICS ========== -->
+          <div class="dashboard-view" id="analytics">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-card-header">
+                  <div class="stat-card-title">Total Projects</div>
+                  <div class="stat-card-icon primary">
+                    <span class="material-symbols-rounded">folder</span>
+                  </div>
+                </div>
+                <div class="stat-card-value">12</div>
+                <div class="stat-card-change positive">
+                  <span class="material-symbols-rounded">trending_up</span>
+                  <span>+2 this week</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card-header">
+                  <div class="stat-card-title">Completed Tasks</div>
+                  <div class="stat-card-icon success">
+                    <span class="material-symbols-rounded">check_circle</span>
+                  </div>
+                </div>
+                <div class="stat-card-value">48</div>
+                <div class="stat-card-change positive">
+                  <span class="material-symbols-rounded">trending_up</span>
+                  <span>+15% from last week</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card-header">
+                  <div class="stat-card-title">Pending Tasks</div>
+                  <div class="stat-card-icon warning">
+                    <span class="material-symbols-rounded">schedule</span>
+                  </div>
+                </div>
+                <div class="stat-card-value">23</div>
+                <div class="stat-card-change negative">
+                  <span class="material-symbols-rounded">trending_down</span>
+                  <span>-3 from last week</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card-header">
+                  <div class="stat-card-title">Team Members</div>
+                  <div class="stat-card-icon info">
+                    <span class="material-symbols-rounded">group</span>
+                  </div>
+                </div>
+                <div class="stat-card-value">8</div>
+                <div class="stat-card-change positive">
+                  <span class="material-symbols-rounded">trending_up</span>
+                  <span>+1 new member</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-grid">
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <h3 class="chart-card-title">Project Progress</h3>
+                  <p class="chart-card-subtitle">Completion rate over time</p>
+                </div>
+                <div class="chart-container">
+                  <canvas id="progressChart"></canvas>
+                </div>
+              </div>
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <h3 class="chart-card-title">Task Distribution</h3>
+                  <p class="chart-card-subtitle">Tasks by category</p>
+                </div>
+                <div class="chart-container">
+                  <canvas id="categoryChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-table-container">
+              <div class="dashboard-table-header">
+                <h3 class="dashboard-table-title">Recent Projects</h3>
+                <a href="#" class="btn btn-secondary">View All</a>
+              </div>
+              <table class="dashboard-table">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="project-title-cell">
+                        <div class="project-icon"><span class="material-symbols-rounded">web</span></div>
+                        <div class="project-info">
+                          <div class="project-title-text">Website Redesign</div>
+                          <div class="project-meta-text">Frontend • 5 tasks</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>85%</td>
+                    <td><span class="status-badge success">In Progress</span></td>
+                    <td>Dec 15, 2024</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="project-title-cell">
+                        <div class="project-icon"><span class="material-symbols-rounded">phone_android</span></div>
+                        <div class="project-info">
+                          <div class="project-title-text">Mobile App</div>
+                          <div class="project-meta-text">Mobile • 8 tasks</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>60%</td>
+                    <td><span class="status-badge warning">In Progress</span></td>
+                    <td>Jan 20, 2025</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="project-title-cell">
+                        <div class="project-icon"><span class="material-symbols-rounded">database</span></div>
+                        <div class="project-info">
+                          <div class="project-title-text">Database Migration</div>
+                          <div class="project-meta-text">Backend • 3 tasks</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>100%</td>
+                    <td><span class="status-badge success">Completed</span></td>
+                    <td>Nov 30, 2024</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div> <!-- /analytics (this closing tag was missing before) -->
+
+          <!-- ========== PRODUCTS ========== -->
+          <div class="dashboard-view" id="products">
+            <div class="empty-state">
+              <div class="empty-state-icon"><span class="material-symbols-rounded">bar_chart</span></div>
+              <h3 class="empty-state-title">Reports</h3>
+              <p class="empty-state-description">Generate detailed reports and analytics. View project performance, team productivity, and time tracking data.</p>
+            </div>
+          </div>
+
+          <!-- ========== SETTINGS ========== -->
+          <div class="dashboard-view" id="settings">
+            <div class="empty-state">
+              <div class="empty-state-icon"><span class="material-symbols-rounded">settings</span></div>
+              <h3 class="empty-state-title">Settings</h3>
+              <p class="empty-state-description">Configure your dashboard preferences, manage team members, and customize your workspace.</p>
+            </div>
+          </div>
+
+        </div> <!-- /dashboard-content -->
+      </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script src="tracking-map.js"></script>
+    <script src="kpi.js"></script>
+    <script>
+      // ---------- Performance indicator cards ----------
+      const F = Fleet.fuel().kpi, H = Fleet.hazards().kpi, M = Fleet.maintenance().kpi, R = Fleet.routes().kpi;
+      const cards = [
+        [F.thefts + ' thefts', F.detectionRate + '% detected, ' + F.avgAlertMin + ' min to alert'],
+        [R.trips + ' trips', R.exposureCut + '% less hazard exposure'], [M.atRisk + ' at risk', M.accuracy + '% prediction accuracy'],
+        [H.total + ' hazards', H.verifiedPct + '% verified, ' + H.avgLatency + ' s latency']];
+      cards.forEach(([v, n], i) => {
+        document.querySelector('[data-kpi="' + i + '"]').textContent = v;
+        document.querySelector('[data-kpi-note="' + i + '"]').textContent = n;
+      });
+
+      // ---------- Map ----------
+      TrackingMap.init('tracking-map');
+
+      // DEMO feed so you can see it working. Delete this block when you
+      // connect your real data (see the WebSocket example below).
+      let lat = -25.7479, lng = 28.2293;
+      setInterval(() => {
+        lat += 0.0006; lng += 0.0008;
+        TrackingMap.update('truck-1', lat, lng, 'Truck 1');
+        document.getElementById('map-status').textContent = 'Live (demo)';
+      }, 1000);
+
+      // REAL data over WebSocket (use instead of the demo block):
+      // const ws = new WebSocket('wss://your-real-server/positions');
+      // ws.onmessage = (e) => {
+      //   const { id, lat, lng, name } = JSON.parse(e.data);
+      //   TrackingMap.update(id, lat, lng, name);
+      //   document.getElementById('map-status').textContent = 'Live';
+      // };
+    </script>
+  </body>
+</html>
